@@ -1,3 +1,4 @@
+// src/app/chat/page.tsx
 "use client";
 
 import { Fragment, useState } from "react";
@@ -7,7 +8,11 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import { Message, MessageContent } from "@/components/ai-elements/message";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputBody,
@@ -17,7 +22,6 @@ import {
   PromptInputFooter,
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
-import { MessageResponse } from "@/components/ai-elements/message";
 import { Loader } from "@/components/ai-elements/loader";
 
 export default function RAGChatBot() {
@@ -25,10 +29,15 @@ export default function RAGChatBot() {
   const { messages, sendMessage, status } = useChat();
 
   const handleSubmit = (message: PromptInputMessage) => {
-    if (!message.text) return;
-    sendMessage({ text: message.text });
+    if (!message.text) {
+      return;
+    }
+    sendMessage({
+      text: message.text,
+    });
     setInput("");
   };
+
   return (
     <div className="max-w-4xl mx-auto p-6 relative size-full h-[calc(100vh-4rem)]">
       <div className="flex flex-col h-full">
@@ -41,20 +50,20 @@ export default function RAGChatBot() {
                     case "text":
                       return (
                         <Fragment key={`${message.id}-${i}`}>
-                          <MessageContent>
-                            <MessageResponse>{part.text}</MessageResponse>
-                          </MessageContent>
+                          <Message from={message.role}>
+                            <MessageContent>
+                              <MessageResponse>{part.text}</MessageResponse>
+                            </MessageContent>
+                          </Message>
                         </Fragment>
                       );
                     default:
                       return null;
                   }
                 })}
-                {(status === "submitted" || status === "streaming") && (
-                  <Loader />
-                )}
               </div>
             ))}
+            {(status === "submitted" || status === "streaming") && <Loader />}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
@@ -68,7 +77,7 @@ export default function RAGChatBot() {
           </PromptInputBody>
           <PromptInputFooter>
             <PromptInputTools>
-              {/* Model selector, web search etc */}
+              {/* Model selector, web search, etc. */}
             </PromptInputTools>
             <PromptInputSubmit disabled={!input && !status} status={status} />
           </PromptInputFooter>
