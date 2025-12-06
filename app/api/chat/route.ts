@@ -8,7 +8,7 @@ import {
   UIDataTypes,
   stepCountIs,
 } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { google } from "@ai-sdk/google";
 import { z } from "zod";
 import { searchDocuments } from "@/lib/search";
 
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     const { messages }: { messages: ChatMessage[] } = await req.json();
 
     const result = streamText({
-      model: openai("gpt-5-mini"),
+      model: google("gemini-2.5-flash"),
       messages: convertToModelMessages(messages),
       tools,
       system: `You are a helpful assistant with access to a knowledge base. 
